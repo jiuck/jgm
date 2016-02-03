@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block description %}
+    {{ description }}
+{% endblock %}
+
+{% block title %}
+    {{ title }}
+{% endblock %}
+
+{% block head %}
+{% endblock %}
+
+{% block nav %}
+    {% include "nav.html" %}
+{% endblock %}
+
+{% block content %}
+    <form method="GET" action="">
+        <input type="text" name="q" placeholder="Search posts" value="{{ request.GET.q }}" />
+        <input type="submit" value="Search" />
+    </form>
+    {% for post in blog %}
+        <article class="child" >
+            <title>{{ post.headline }}</title>
+            <p class="post-subtittle">{{ post.kudos }} | {{ post.number_comments }} | {{ post.mod_date }}</p>
+            <p class="post-body">{{ post.text|escape|truncatewords:75 }}</p>
+            <p class="post-comments">NO COMMENTS BY THE MOMENT</p>
+        </article>
+        <hr>
+    {% endfor %}
+
+    {% if blog.has_next %}
+        <div class="pagination">
+            <span class="step-links">
+                {% if blog.has_previous %}
+                    <a href="?page={{ blog.previous_page_number }}
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">previous</a>
+                {% endif %}
+
+                <span class="current">
+                    Page {{ blog.number }} of {{ blog.paginator.num_pages }}.
+                </span>
+
+                {% if blog.has_next %}
+                    <a href="?page={{ blog.next_page_number }}
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">next</a>
+                {% endif %}
+            </span>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
