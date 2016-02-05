@@ -1,18 +1,47 @@
 from django.db.models      import Q
+from django.core.mail      import send_mail, BadHeaderError
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.http           import HttpResponse
-from django.shortcuts      import render
+from django.http           import HttpResponse, HttpResponseRedirect
+from django.shortcuts      import render, get_object_or_404
+from web.forms             import HelloForm
 from web.models            import Post
 
 
 def index(request):
-    context = {     'title': 'Index',
-                    'description': 'Django and PHP web developer',
+    context = {'title': 'Index',
+               'description': 'Django and PHP web developer',
               }
     return render(request, 'index.html', context) 
 
 def hello(request):
-    return HttpResponse("Buenas! Bienvenido al apartado hello!") 
+    form = HelloForm()
+    if request.method == 'POST': 
+        subject = request.POST.get('subject', '')
+        message = request.POST.get('message', '')
+        from_email = request.POST.get('email', '')
+        if subject and message and from_email:
+            #We should be able to send the email here.
+            #try:
+            #    send_mail(subject, message, from_email, ['jiuck.grecords@gmail.com'])
+            #except BadHeaderError:
+            #    return HttpResponse('Invalid header found.')
+            return HttpResponseRedirect('/jgm/thank-you/')
+        form = HelloForm({'subject':subject, 
+                    'message':message, 
+                    'email':from_email
+                    }) 
+    #First time and resend your data if wrong
+    context = { 'title': 'Say Hello!',
+                'description': 'Django and PHP contact page',
+                'form': form,
+              }
+    return render(request, 'hello.html', context) 
+
+def thankYou(request):
+    context = {'title': 'Thank you',
+               'description': 'Django and PHP web developer',
+              }
+    return render(request, 'thank-you.html', context) 
 
 def blog(request):
     queryset_list = Post.objects.order_by('-pub_date')
@@ -41,7 +70,8 @@ def blog(request):
               }
     return render(request, 'blog.html', context) 
 
-def post(request):
+def post(request, title):
+    queryset = get_object_or_404(Post, id=title)
     return HttpResponse("Buenas! Bienvenido al apartado post !") 
 
 def projects(request):

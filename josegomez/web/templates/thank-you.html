@@ -16,11 +16,10 @@
 {% endblock %}
 
 {% block content %}
-	<nav class="index">
-		<h1>{{ title }}</h1>
-		<hr>
-	</nav>
+	<p class="thank-you">I will get in contact with you as soon as possible. Thank you for your email.</p>
+    <small>You'll be redirected to the homepage in a few seconds</small>
 {% endblock %}
 
 {% block js %}
+    <script>window.location.replace("/jgm/");</script>
 {% endblock %}

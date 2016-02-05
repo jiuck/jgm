@@ -16,40 +16,44 @@
 {% endblock %}
 
 {% block content %}
+    <!-- Search engine -->
     <form method="GET" action="">
         <input type="text" name="q" placeholder="Search posts" value="{{ request.GET.q }}" />
         <input type="submit" value="Search" />
     </form>
+
+    <!-- Last 10 blog posts -->
     {% for post in blog %}
         <article class="child" >
-            <title>{{ post.headline }}</title>
+            <h1>{{ post.headline|upper }}</h1>
             <p class="post-subtittle">{{ post.kudos }} | {{ post.number_comments }} | {{ post.mod_date }}</p>
             <p class="post-body">{{ post.text|escape|truncatewords:75 }}</p>
-            <p class="post-comments">NO COMMENTS BY THE MOMENT</p>
+            <div class="post-comments" id="disqus_thread"></div>
+            <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript" rel="nofollow">comments powered by Disqus.</a></noscript>
         </article>
-        <hr>
     {% endfor %}
 
+    <!-- Pagination -->
     {% if blog.has_next %}
         <div class="pagination">
             <span class="step-links">
                 {% if blog.has_previous %}
                     <a href="?page={{ blog.previous_page_number }}
-                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">previous</a>
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Prev</a>
                 {% endif %}
 
                 <span class="current">
-                    Page {{ blog.number }} of {{ blog.paginator.num_pages }}.
+                    {{ blog.number }}/{{ blog.paginator.num_pages }}
                 </span>
 
                 {% if blog.has_next %}
                     <a href="?page={{ blog.next_page_number }}
-                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">next</a>
+                            {% if request.GET.q %}&q={{ request.GET.q }}{% endif %}">Next</a>
                 {% endif %}
             </span>
         </div>
     {% endif %}
 {% endblock %}
 
-{% block footer %}
+{% block js %}
 {% endblock %}
